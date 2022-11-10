@@ -11,23 +11,18 @@ def compute_basics_on_file(title, df):
 
 def make_float(v):
     try:
+        v=v.replace(",",".")
         return float(v)
     except:
         return pd.np.nan
 
-file = "dataset/dev.xml"
-df_dev = pd.read_xml(file)
+def load_xml(file_name):
+    df = pd.read_xml(file_name)
+    df["note"] = df["note"].apply(make_float)
+    return df.dropna()
 
-df_dev["note"] = df_dev["note"].apply(make_float)
-# json_result = df.to_json()
-# out = open("test.json", "w")
-# json.dump(result, "test.csv")
+df_dev = load_xml("dataset/dev.xml")
 
-# file = "dataset/train.xml"
-# df_train = pd.read_xml(file)
-
-# file = "dataset/test.xml"
-# df_test = pd.read_xml(file)
 
 print(df_dev.keys())
 print(df_dev.dtypes)
