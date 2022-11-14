@@ -10,9 +10,11 @@ def compute_basics_analysis_df(title, df):
         print(f'Moyenne des notes = {df["note"].mean():.3f}')
         print(f'Ecart type = {df["note"].std():.3f}')
     counts = df['movie'].value_counts()
+    print(f'Nombre de films = {len(counts)}')
     print(f'Moyenne du nombre de commentaires par film = {counts.mean():.3f}')
     print(f"Ecart type = {counts.std():.3f}")
     counts = df['user_id'].value_counts()
+    print(f'Nombre de users = {len(counts)}')
     print(f'Moyenne du nombre de commentaires par user = {counts.mean():.3f}')
     print(f"Ecart type = {counts.std():.3f}")
 
@@ -26,7 +28,10 @@ def make_float(v):
 
 def load_xml(file_name):
     df = pd.read_xml(file_name)
-    df["note"] = df["note"].apply(make_float)
+    try:
+        df["note"] = df["note"].apply(make_float)
+    except:
+        pass
     return df.dropna()
 
 df_dev = load_xml("dataset/dev.xml")
@@ -39,4 +44,4 @@ compute_basics_analysis_df("dev", df_dev)
 # df_train = load_xml("dataset/train.xml")
 # compute_basics_analysis_df("train", df_train)
 df_test = load_xml("dataset/test.xml")
-# compute_basics_analysis_df("test", df_test)
+compute_basics_analysis_df("test", df_test)
