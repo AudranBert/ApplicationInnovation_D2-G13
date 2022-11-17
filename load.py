@@ -1,7 +1,10 @@
 import pandas as pd
 import json
-
-
+import matplotlib.pyplot as plt
+import re
+import pickle
+from tqdm import tqdm
+split_char = "\W+"
 def compute_basics_analysis_df(title, df):
     title_str = " "+title+" "
     print(f'{title_str.upper().center(50, "-")}')
@@ -34,14 +37,55 @@ def load_xml(file_name):
         pass
     return df.dropna()
 
-df_dev = load_xml("dataset/dev.xml")
+#return une hashmap qui decrit le lexique
+def extract_lexique(df):
+    words = []
+    lexique = {}
+    with tqdm(total=len(df)) as pbar:
+        for idx, row in df.iterrows():
+            sentence = row['commentaire'].lower()
+            sentence = re.split(split_char, sentence)
+            for j in sentence:
+                if j not in words and j != "":
+                    lexique[j] = 1
+                    words.append(j)
+                elif j in words:
+                    lexique[j] = lexique[j]+1
+            pbar.update(1)
+    print("There is", len(lexique), "words")
+    save_object(lexique,"lexique.obj")
+    return(lexique)
+
+def comment_average_char(df):
+    return(df['commentaire'].apply(len).mean())
+
+def save_object(obj, filename):
+    with open(filename, 'wb') as outp:  # Overwrites any existing file.
+        pickle.dump(obj, outp, pickle.HIGHEST_PROTOCOL)
+
+def load_object(filename):
+    with open(filename,'rb') as intp:
+        return pickle.load(intp)
 
 
-print(df_dev.keys())
-print(df_dev.dtypes)
-print(df_dev)
-compute_basics_analysis_df("dev", df_dev)
+#df_dev = load_xml("dataset/dev.xml")
+
+
+#print(df_dev.keys())
+#print(df_dev.dtypes)
+#print(df_dev)
+#list_avg = comment_average_char(df_dev)
+#print(list_avg)
+#extract_lexique(df_dev)
+lexique = load_object("lexique.obj")
+for w in sorted(lexique,key=lexique.get,reverse=True):
+    lexique[w]=lexique[w]-1
+    if(lexique[w]>1000):
+        print(w,lexique[w])
+
+#print(len(lexique))
+#compute_basics_analysis_df("dev", df_dev)
 # df_train = load_xml("dataset/train.xml")
 # compute_basics_analysis_df("train", df_train)
-df_test = load_xml("dataset/test.xml")
-compute_basics_analysis_df("test", df_test)
+#df_test = load_xml("dataset/test.xml")
+#compute_basics_analysis_df("test", df_test)
