@@ -6,6 +6,7 @@ import pickle
 from tqdm import tqdm
 import analyzer as an
 split_char = "\W+"
+errors = {'note_unvalid': 0}
 
 #return une hashmap qui decrit le lexique
 def extract_lexique(df):
@@ -38,30 +39,37 @@ def load_object(filename):
         return pickle.load(intp)
 
 def make_float(v):
-    try:
-        v = v.replace(",", ".")
-        return float(v)
-    except:
-        return pd.np.nan
+    v = v.replace(",", ".")
+    return float(v)
+
+def find_nan(df):
+    print(len(df))
+    print(f"There is :\n{df.isnull().sum()} \nNaN rows")
 
 def load_xml(file_name):
     df = pd.read_xml(file_name)
+    # print(df.keys())
+    # print(df.dtypes)
+    # print(df)
+    # find_nan(df)
     try:
         df["note"] = df["note"].apply(make_float)
     except:
         pass
     return df.dropna()
 
+
+
+
 df_dev = load_xml("dataset/dev.xml")
 
 
-print(df_dev.keys())
-print(df_dev.dtypes)
-print(df_dev)
 an.compute_basics_analysis_df("dev", df_dev)
-an.hist_mean_rate(df_dev, "user_id")
-an.hist_column(df_dev, "note")
-an.hist_mean_rate(df_dev, "movie")
+# an.hist_mean_rate(df_dev, "user_id")
+# an.hist_column(df_dev, "note")
+# an.hist_mean_rate(df_dev, "movie")
+# an.violon_column(df_dev, 'movie')
+# an.violon_column(df_dev, 'user_id')
 
 # list_avg = comment_average_char(df_dev)
 # print(list_avg)
@@ -69,5 +77,5 @@ an.hist_mean_rate(df_dev, "movie")
 # boxplot_column(df_dev, "note")
 # df_train = load_xml("dataset/train.xml")
 # compute_basics_analysis_df("train", df_train)
-df_test = load_xml("dataset/test.xml")
+# df_test = load_xml("dataset/test.xml")
 # compute_basics_analysis_df("test", df_test)
