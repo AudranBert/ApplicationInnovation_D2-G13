@@ -57,7 +57,7 @@ def extract_lexique(df):
     return(lexique)
 
 def comment_average_char(df):
-    return(df['commentaire'].apply(len).mean())
+    return(df[['commentaire','note']].groupby(['note']).apply(len))
 
 def save_object(obj, filename):
     with open(filename, 'wb') as outp:  # Overwrites any existing file.
@@ -68,20 +68,23 @@ def load_object(filename):
         return pickle.load(intp)
 
 
-#df_dev = load_xml("dataset/dev.xml")
+df_dev = load_xml("dataset/dev.xml")
 
 
 #print(df_dev.keys())
 #print(df_dev.dtypes)
 #print(df_dev)
-#list_avg = comment_average_char(df_dev)
+list_avg = comment_average_char(df_dev)
+print(list_avg)
+#for key,item in list_avg:
+    #print(list_avg.get_group(key), "\n\n")
 #print(list_avg)
 #extract_lexique(df_dev)
-lexique = load_object("lexique.obj")
-for w in sorted(lexique,key=lexique.get,reverse=True):
-    lexique[w]=lexique[w]-1
-    if(lexique[w]>1000):
-        print(w,lexique[w])
+#lexique = load_object("lexique.obj")
+#for w in sorted(lexique,key=lexique.get,reverse=True):
+#    lexique[w]=lexique[w]-1
+#    if(lexique[w]>1000):
+#        print(w,lexique[w])
 
 #print(len(lexique))
 #compute_basics_analysis_df("dev", df_dev)
