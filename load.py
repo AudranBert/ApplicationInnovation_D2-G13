@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import re
 import pickle
 from tqdm import tqdm
+from collections import defaultdict
+import statistics
 import analyzer as an
 split_char = "\W+"
 errors = {'note_unvalid': 0}
@@ -59,9 +61,21 @@ def load_xml(file_name, print_infos=False):
         pass
     return df.dropna()
 
+def special_stuff(df):
+    new_df = defaultdict(lambda: [])
+    with tqdm(total=len(df)) as pbar:
+        for idx,row in df.iterrows():
+            sentence = row['commentaire'].lower()
+            for c in sentence:
+                #print(c)
+                if (c.isalnum() == False) and (c != ' '):
+                    new_df[c].append(row['note'])
+            pbar.update(1)
+    return(new_df)
 
 
 
+df_mdr = load_object('df_mdr')
 df_dev = load_xml("dataset/dev.xml")
 
 an.compute_basics_analysis_df("dev", df_dev)
