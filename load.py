@@ -75,16 +75,17 @@ def special_stuff(df):
 
 
 
+
 df_mdr = load_object('df_mdr')
 df_dev = load_xml("dataset/dev.xml")
 
 an.compute_basics_analysis_df("dev", df_dev)
 
-an.hist_column(df_dev, "note")
-an.hist_mean_rate(df_dev, "user_id")
-an.violon_column(df_dev, 'user_id')
-an.hist_mean_rate(df_dev, "movie")
-an.violon_column(df_dev, 'movie')
+# an.hist_column(df_dev, "note")
+# an.hist_mean_rate(df_dev, "user_id")
+# an.violon_column(df_dev, 'user_id')
+# an.hist_mean_rate(df_dev, "movie")
+# an.violon_column(df_dev, 'movie')
 
 # list_avg = comment_average_char(df_dev)
 # print(list_avg)

@@ -29,3 +29,23 @@
 
 # Comparer dev et train
 
+
+
+
+
+# reste
+
+* longueur (lettres, carac, mots, phrases):
+  * stats principales (moyenne, ecart type, médiane, quartiles)
+  * distribution compléte (histogramme)
+* casse
+* repetition
+* plot emoji
+* plot carac specieaux+ponctuaction
+* url
+* corrélation longueur/note via 5 violon avec 1 par note 
+* corrélation repetition/note
+* corrélation ponctuaction/note
+* corrélation emoji/note
+* corrélation user/note??
+* 
