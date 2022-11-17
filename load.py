@@ -11,6 +11,7 @@ import analyzer as an
 import statistics
 split_char = "\W+"
 regexed = re.compile(split_char)
+errors = {'note_unvalid': 0}
 
 #return une hashmap qui decrit le lexique
 def extract_lexique(df):
@@ -55,14 +56,19 @@ def load_object(filename):
         return pickle.load(intp)
 
 def make_float(v):
-    try:
-        v = v.replace(",", ".")
-        return float(v)
-    except:
-        return pd.np.nan
+    v = v.replace(",", ".")
+    return float(v)
+
+def find_nan(df):
+    print(len(df))
+    print(f"There is :\n{df.isnull().sum()} \nNaN rows")
 
 def load_xml(file_name):
     df = pd.read_xml(file_name)
+    # print(df.keys())
+    # print(df.dtypes)
+    # print(df)
+    # find_nan(df)
     try:
         df["note"] = df["note"].apply(make_float)
     except:

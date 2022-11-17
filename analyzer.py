@@ -23,17 +23,28 @@ def compute_basics_analysis_df(title, df):
     print(f'{"-".upper().center(50, "-")}')
 
 
+def violon_column(df, column="note"):
+    fig, axes = plt.subplots()
+
+    new_df = df.groupby([column]).note.mean()
+    axes.violinplot(dataset=[new_df.values])
+    plt.title("violon plot of mean rating by " + column)
+    plt.show()
+
 def boxplot_column(df, column="note"):
     boxplot = df.boxplot(column=column)
+    plt.title("box plot of"+column)
     plt.show()
 
 
 def hist_column(df, column="note"):
     hist = df.hist(column=column, bins=9)
+    plt.title("hist of "+column)
     plt.show()
 
 def hist_mean_rate(df, column="user_id"):
     new_df = df.groupby([column]).note.mean()
-    hist = new_df.hist(bins=9)
+    bins = [i / 2 for i in range(1, 10)]
+    hist = new_df.hist(bins=bins)
     plt.title("mean rating by "+column)
     plt.show()
