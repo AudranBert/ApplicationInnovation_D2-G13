@@ -46,12 +46,13 @@ def find_nan(df):
     print(len(df))
     print(f"There is :\n{df.isnull().sum()} \nNaN rows")
 
-def load_xml(file_name):
+def load_xml(file_name, print_infos=False):
     df = pd.read_xml(file_name)
-    # print(df.keys())
-    # print(df.dtypes)
-    # print(df)
-    # find_nan(df)
+    if print_infos:
+        print(df.keys())
+        print(df.dtypes)
+        print(df)
+        find_nan(df)
     try:
         df["note"] = df["note"].apply(make_float)
     except:
@@ -63,13 +64,13 @@ def load_xml(file_name):
 
 df_dev = load_xml("dataset/dev.xml")
 
-
 an.compute_basics_analysis_df("dev", df_dev)
-# an.hist_mean_rate(df_dev, "user_id")
-# an.hist_column(df_dev, "note")
-# an.hist_mean_rate(df_dev, "movie")
-# an.violon_column(df_dev, 'movie')
-# an.violon_column(df_dev, 'user_id')
+
+an.hist_column(df_dev, "note")
+an.hist_mean_rate(df_dev, "user_id")
+an.violon_column(df_dev, 'user_id')
+an.hist_mean_rate(df_dev, "movie")
+an.violon_column(df_dev, 'movie')
 
 # list_avg = comment_average_char(df_dev)
 # print(list_avg)
