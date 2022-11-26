@@ -85,11 +85,24 @@ def get_comment_properties(df):
             pbar.update(1)
     return pd.DataFrame(l, columns=['movie', 'review_id', 'name', 'user_id', 'note', 'len_comment', 'len_wrd', 'len_letters', 'len_upper'])
 
-# df_mdr = load_object('df_mdr')
-df_dev = load_xml("dataset/dev.xml")
-
+df_mdr = load_object('df_mdr')
+#df_dev = load_xml("dataset/dev.xml")
+#save_object(df_dev,"df_mdr")
 # an.compute_basics_analysis_df("dev", df_dev)
-print(get_comment_properties(df_dev))
+#print(df_mdr.head())
+dict_emoji = special_stuff(df_mdr)
+plt.figure(figsize=(20,8))
+#print(df_emoji)
+for emoji, notes_list in dict_emoji.items():
+    plt.bar(emoji,sum(notes_list)/len(notes_list),align='edge',width=0.5)
+
+plt.tight_layout()
+plt.tick_params(axis="x",which='major',labelsize=7)
+
+plt.show()
+#df_comments = get_comment_properties(df_mdr)
+#df_comments.plot(y="note",x="len_letters",alpha=0.5,kind="scatter")
+#plt.show()
 
 # an.hist_column(df_dev, "note")
 # an.hist_mean_rate(df_dev, "user_id")
