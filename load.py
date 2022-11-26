@@ -74,12 +74,18 @@ def special_stuff(df):
     return(new_df)
 
 
+def get_comment_properties(df):
+    new_df = []
+    with tqdm(total=len(df)) as pbar:
+        for idx, row in df.iterrows():
+            sentence = row['commentaire'].lower()
+            print(sentence)
 
-
-df_mdr = load_object('df_mdr')
+# df_mdr = load_object('df_mdr')
 df_dev = load_xml("dataset/dev.xml")
 
-an.compute_basics_analysis_df("dev", df_dev)
+# an.compute_basics_analysis_df("dev", df_dev)
+get_comment_properties(df_dev)
 
 # an.hist_column(df_dev, "note")
 # an.hist_mean_rate(df_dev, "user_id")
