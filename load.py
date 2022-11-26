@@ -75,17 +75,21 @@ def special_stuff(df):
 
 
 def get_comment_properties(df):
-    new_df = []
+    l = []
     with tqdm(total=len(df)) as pbar:
         for idx, row in df.iterrows():
-            sentence = row['commentaire'].lower()
-            print(sentence)
+            raw = row['commentaire']
+            sentence_lower = row['commentaire'].lower()
+            words = re.split(split_char, sentence_lower)
+            l.append([row['movie'], row['review_id'], row['name'], row['user_id'], row['note'], len(raw), len(words), sum(1 for c in sentence_lower if c.islower()), sum(1 for c in raw if c.isupper())])
+            pbar.update(1)
+    return pd.DataFrame(l, columns=['movie', 'review_id', 'name', 'user_id', 'note', 'len_comment', 'len_wrd', 'len_letters', 'len_upper'])
 
 # df_mdr = load_object('df_mdr')
 df_dev = load_xml("dataset/dev.xml")
 
 # an.compute_basics_analysis_df("dev", df_dev)
-get_comment_properties(df_dev)
+print(get_comment_properties(df_dev))
 
 # an.hist_column(df_dev, "note")
 # an.hist_mean_rate(df_dev, "user_id")
