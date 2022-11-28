@@ -1,7 +1,7 @@
 import pandas as pd
 import json
 import matplotlib.pyplot as plt
-
+import seaborn as sns
 
 def compute_basics_analysis_df(title, df):
     title_str = " " + title + " "
@@ -23,12 +23,16 @@ def compute_basics_analysis_df(title, df):
     print(f'{"-".upper().center(50, "-")}')
 
 
-def violon_column(df, column="note"):
-    fig, axes = plt.subplots()
+def violin_column(df, column="note", log=False):
+    # fig, axes = plt.subplots()
 
-    new_df = df.groupby([column]).note.mean()
-    axes.violinplot(dataset=[new_df.values])
-    plt.title("violon plot of mean rating by " + column)
+    # new_df = df.groupby([column]).note.mean()
+    # print(new_df)
+    # axes.violinplot(dataset=[new_df.values])
+    sns.violinplot(data=df, x="note", y=column,)
+    plt.title(f"violin plot of mean rating by {column} {'with a log scale' if log else ''} ")
+    if log:
+        plt.yscale('log')
     plt.show()
 
 def boxplot_column(df, column="note"):
