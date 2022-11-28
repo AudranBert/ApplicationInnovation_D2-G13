@@ -94,7 +94,8 @@ dict_emoji = special_stuff(df_mdr)
 plt.figure(figsize=(20,8))
 #print(df_emoji)
 for emoji, notes_list in dict_emoji.items():
-    plt.bar(emoji,sum(notes_list)/len(notes_list),align='edge',width=0.5)
+    if(len(notes_list)>50):
+        plt.bar(emoji,sum(notes_list)/len(notes_list),align='edge',width=0.5)
 
 plt.tight_layout()
 plt.tick_params(axis="x",which='major',labelsize=7)
