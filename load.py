@@ -103,6 +103,11 @@ def get_correlation(df):
     corr_matrix = df.corr()
     return corr_matrix
 
+def get_correlation_user_movies_with_notes(df):
+    df['user_id'] = df['user_id'].astype('category').cat.codes
+    df['movie'] = df['movie'].astype('category').cat.codes
+    plot_correlation_matrix(df)
+
 def plot_correlation_matrix(df):
     import seaborn as sn
     import matplotlib.pyplot as plt
@@ -137,8 +142,9 @@ if __name__ == '__main__':
         save_object(df, dataset_pickle)
 
     df = check_if_pickle_exit(os.path.join("pickle", f"comment_{set}_p.p"), get_comment_properties, df)
-    plot_correlation_matrix(df)
-    plot_violin_comparaison(df, 'len_letters')
+    # plot_correlation_matrix(df)
+    get_correlation_user_movies_with_notes(df)
+    # plot_violin_comparaison(df, 'len_letters')
 
 
 
