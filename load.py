@@ -90,19 +90,37 @@ df_mdr = load_object('df_mdr')
 #save_object(df_dev,"df_mdr")
 # an.compute_basics_analysis_df("dev", df_dev)
 #print(df_mdr.head())
-dict_emoji = special_stuff(df_mdr)
-plt.figure(figsize=(20,8))
+#dict_emoji = special_stuff(df_mdr)
+#plt.figure(figsize=(20,8))
 #print(df_emoji)
-for emoji, notes_list in dict_emoji.items():
-    if(len(notes_list)>50):
-        plt.bar(emoji,sum(notes_list)/len(notes_list),align='edge',width=0.5)
+#for emoji, notes_list in dict_emoji.items():
+#    if(len(notes_list)>50):
+#        plt.bar(emoji,sum(notes_list)/len(notes_list),align='edge',width=0.5)
 
-plt.tight_layout()
-plt.tick_params(axis="x",which='major',labelsize=7)
+#plt.tight_layout()
+#plt.tick_params(axis="x",which='major',labelsize=7)
 
+#plt.show()
+df_comments = get_comment_properties(df_mdr)
+#plt.figure(figize=(20,8))
+under_avg = []
+above_avg = []
+for index,row in df_comments.iterrows():
+    if(row['len_wrd']>70):
+        above_avg.append(row['note'])
+    else:
+        under_avg.append(row['note'])
+
+plt.hist(under_avg)
+plt.title("Distribution des notes,taille du commentaire en dessous de 70")
 plt.show()
-#df_comments = get_comment_properties(df_mdr)
-#df_comments.plot(y="note",x="len_letters",alpha=0.5,kind="scatter")
+plt.hist(above_avg)
+plt.title("Distribution des notes,taille du commentaire au dessus de 70")
+plt.show()
+
+print(len(df_comments["len_wrd"].unique()))
+print("moyenne de la taille des mots:",sum(df_comments['len_wrd'].unique()/len(df_comments['len_wrd'].unique())))
+
 #plt.show()
 
 # an.hist_column(df_dev, "note")
