@@ -19,9 +19,6 @@ dev_file = os.path.join(data_folder, dev_file)
 test_file = os.path.join(data_folder, test_file)
 
 
-file1 = "data_deft2017/task1-testGold.csv"
-file2 = "data_deft2017/task1-train.csv"
-
 split_char = "\W+"
 
 
@@ -110,7 +107,7 @@ def convert_reviews(data, occ, mode="Train"):
             try:
                 l = []
                 if mode == "Test":
-                    line = ""
+                    line = "1.0"
                 else:
                     line = str(row['note'])
                 for i in occ[idx]:

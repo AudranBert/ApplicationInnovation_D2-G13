@@ -3,3 +3,8 @@ Elastic/
 .idea/
 pickle/
 __pychache__/
+train.svm
+test.svm
+dev.svm
+train.exe
+liblinear-2.45
