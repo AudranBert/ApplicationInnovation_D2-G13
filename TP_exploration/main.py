@@ -65,7 +65,7 @@ if __name__ == '__main__':
             l.append([lexique[i], occ[idx][i]])
         l = sorted(l, key=lambda x: x[0])
         for i, j in l:
-            line = line + " " + str(i) +":"+str(j)
+            line = line + " " + str(i) + ":" + str(j)
         if row['file'] == "Test":
             test.append(line)
         elif row['file'] == "Train":
