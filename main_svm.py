@@ -33,7 +33,7 @@ def load_xml(file_name):
         df["note"] = df["note"].apply(make_float)
     except:
         pass
-    df = df.dropna()
+    df.fillna('',inplace=True)
     return df.reset_index(drop=True)
 
 
