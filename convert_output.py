@@ -4,9 +4,12 @@ import numpy as np
 from main_svm import *
 
 def createEvalFile(filename_eval, dataset, liblinear_output_file):
-    liblinear_out = pd.read_csv(liblinear_output_file, sep=" ", header=None)
+    liblinear_out = pd.read_csv(liblinear_output_file, sep=" ", header=None,names=["note"])
     out = pd.concat([dataset["review_id"], liblinear_out], axis=1)
-    out.to_csv(filename_eval, header=None, index=None, sep=' ')
+    print(out)
+    out["note"] = pd.to_numeric(out["note"],downcast="float")
+    out.to_csv(filename_eval, header=None, index=None, sep=' ',decimal=",")
+    
 
 if __name__ == '__main__':
     pickle_file = os.path.join(pickle_folder, "test.p")
