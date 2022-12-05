@@ -126,6 +126,7 @@ def convert_reviews(data, occ, mode="Train"):
 
 if __name__ == '__main__':
 
+    os.makedirs(pickle_folder, exist_ok=True)
     # 1
     pickle_file = os.path.join(pickle_folder, "train.p")
     train = check_xml(pickle_file, train_file)
@@ -163,7 +164,7 @@ if __name__ == '__main__':
 
     pickle_file = os.path.join(pickle_folder, "occ_train.p")
     if not os.path.exists(pickle_file):
-        print(f"Getting occurences...")
+        print(f"Getting Train occurences...")
         occ = get_occ_reviews(train)
         save_object(occ, pickle_file)
     else:
@@ -172,13 +173,14 @@ if __name__ == '__main__':
 
     svm_file = "train.svm"
     if not os.path.exists(svm_file):
+        print(f"Generating train.svm file...")
         train_tmp = convert_reviews(train, occ, "Train")
         df_train = pd.DataFrame(train_tmp)
         df_train.to_csv(svm_file, index=False, header=None)
 
     pickle_file = os.path.join(pickle_folder, "occ_test.p")
     if not os.path.exists(pickle_file):
-        print(f"Getting occurences...")
+        print(f"Getting Test occurences...")
         occ = get_occ_reviews(test)
         save_object(occ, pickle_file)
     else:
@@ -187,6 +189,7 @@ if __name__ == '__main__':
 
     svm_file = "test.svm"
     if not os.path.exists(svm_file):
+        print(f"Generating test.svm file...")
         test_tmp = convert_reviews(test, occ, "Test")
         df_test = pd.DataFrame(test_tmp)
         df_test.to_csv(svm_file, index=False, header=None)
