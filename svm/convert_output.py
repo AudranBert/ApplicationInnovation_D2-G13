@@ -8,7 +8,7 @@ def createEvalFile(filename_eval, dataset, liblinear_output_file):
     out = pd.concat([dataset["review_id"], liblinear_out], axis=1)
     print(out)
     out["note"] = pd.to_numeric(out["note"],downcast="float")
-    out.to_csv(filename_eval, header=None, index=None, sep=' ',decimal=",")
+    out.to_csv(filename_eval, header=None, index=None, sep=' ', decimal=",")
 
 if __name__ == '__main__':
     pickle_file = os.path.join(pickle_folder, "test.p")
