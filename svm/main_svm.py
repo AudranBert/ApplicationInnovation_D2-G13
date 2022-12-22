@@ -143,9 +143,9 @@ if __name__ == '__main__':
     # test_f['file'] = "Test"
     # train_f = pd.read_csv(file2, sep="\t", header=None, names=['sentence', 'sentiment'], skiprows=10, index_col=0)
     # train_f['file'] = "Train"
-
+    train["note"] = train["note"].apply(times_two)
     all = pd.concat([train, test], ignore_index=True)
-
+    
     # all.to_csv("test.csv")
     # print(all)
 
@@ -175,7 +175,6 @@ if __name__ == '__main__':
         occ = load_object(pickle_file)
 
     svm_file = "train.svm"
-    train["note"] = train["note"].apply(times_two)
     if not os.path.exists(svm_file):
         print(f"Generating train.svm file...")
         train_tmp = convert_reviews(train, occ, "Train")
