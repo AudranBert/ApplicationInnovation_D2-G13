@@ -13,7 +13,7 @@ pickle_needed_folder = "pickle_needed"
 data_folder = "dataset"
 train_file = "train.xml"
 test_file = "test.xml"
-dev_file = "test.xml"
+dev_file = "dev.xml"
 train_file = os.path.join(data_folder, train_file)
 dev_file = os.path.join(data_folder, dev_file)
 test_file = os.path.join(data_folder, test_file)
@@ -26,6 +26,9 @@ def make_float(v):
     v = v.replace(",", ".")
     return float(v)
 
+def times_two(v):
+    v = v*2
+    return v
 
 def load_xml(file_name):
     df = pd.read_xml(file_name)
@@ -172,6 +175,7 @@ if __name__ == '__main__':
         occ = load_object(pickle_file)
 
     svm_file = "train.svm"
+    train["note"] = train["note"].apply(times_two)
     if not os.path.exists(svm_file):
         print(f"Generating train.svm file...")
         train_tmp = convert_reviews(train, occ, "Train")
