@@ -13,7 +13,10 @@ class CustomDataset(Dataset):
         df = dm.dataset_to_pickle(dataset, note)
         self.x = df['commentaire'].to_numpy()
         if self.note:
-            self.y = df['note'].to_numpy()
+            self.y = (df['note'].apply(lambda x: (x*2)-1).to_numpy()).astype(np.int64)
+            # print(np.max(self.y))
+            # print(np.min(self.y))
+
 
     def __len__(self):
         return len(self.x)
@@ -22,6 +25,7 @@ class CustomDataset(Dataset):
         if self.note:
             # logging.info(self.y[idx])
             x = torch.Tensor(self.x[idx])
-            return x.to(torch.int), torch.Tensor(np.asarray(self.y[idx]))
+            return x.to(torch.int), torch.from_numpy(np.asarray(self.y[idx])) #torch.Tensor(np.asarray(self.y[idx]))
         return torch.Tensor.int(self.x[idx])
+
 
