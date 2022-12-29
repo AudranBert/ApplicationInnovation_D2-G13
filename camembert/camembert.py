@@ -32,7 +32,7 @@ def train_epoch(epoch,network,optimizer,train_loader,criterion):
         t_loss += loss
         t_batch += 1
         optimizer.step()  # gradient descent
-        if batch_idx % 100 == 1:
+        if batch_idx % 250 == 10:
             size = len(target) * t_batch
             step_loss = t_loss/size
             writer.add_scalar('Loss/train', step_loss, batch_idx)
