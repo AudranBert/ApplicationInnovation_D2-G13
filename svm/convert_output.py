@@ -3,11 +3,15 @@ import pandas as pd
 import numpy as np
 from main_svm import *
 
+def divide_twice(v):
+    v = v/2
+    return v
 def createEvalFile(filename_eval, dataset, liblinear_output_file):
     liblinear_out = pd.read_csv(liblinear_output_file, sep=" ", header=None,names=["note"])
     out = pd.concat([dataset["review_id"], liblinear_out], axis=1)
     print(out)
     out["note"] = pd.to_numeric(out["note"],downcast="float")
+    out["note"] = out["note"].apply(divide_twice)
     out.to_csv(filename_eval, header=None, index=None, sep=' ', decimal=",")
 
 if __name__ == '__main__':

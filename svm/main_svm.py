@@ -13,7 +13,7 @@ pickle_needed_folder = "pickle_needed"
 data_folder = "dataset"
 train_file = "train.xml"
 test_file = "test.xml"
-dev_file = "test.xml"
+dev_file = "dev.xml"
 train_file = os.path.join(data_folder, train_file)
 dev_file = os.path.join(data_folder, dev_file)
 test_file = os.path.join(data_folder, test_file)
@@ -26,6 +26,9 @@ def make_float(v):
     v = v.replace(",", ".")
     return float(v)
 
+def times_two(v):
+    v = v*2
+    return v
 
 def load_xml(file_name):
     df = pd.read_xml(file_name)
@@ -140,9 +143,9 @@ if __name__ == '__main__':
     # test_f['file'] = "Test"
     # train_f = pd.read_csv(file2, sep="\t", header=None, names=['sentence', 'sentiment'], skiprows=10, index_col=0)
     # train_f['file'] = "Train"
-
+    train["note"] = train["note"].apply(times_two)
     all = pd.concat([train, test], ignore_index=True)
-
+    
     # all.to_csv("test.csv")
     # print(all)
 
