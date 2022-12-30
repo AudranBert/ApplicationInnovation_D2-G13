@@ -4,8 +4,8 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --partition=gpu
 #SBATCH --gpus-per-node=1
-#SBATCH --mem=8G
-#SBATCH --time=24:00:00
+#SBATCH --mem=16G
+#SBATCH --time=48:00:00
 #SBATCH --output=slurm-app.out
 
 

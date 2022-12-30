@@ -40,9 +40,9 @@ class CamembertCustom(nn.Module):
         super(CamembertCustom, self).__init__()
         self.camembert = CamembertModel.from_pretrained("camembert-base").to(device)
         self.bidirectionnel = False
-        self.hidden_dim = 128
-        self.n_layers = 2
-        self.dropout = 0.25
+        self.hidden_dim = 256
+        self.n_layers = 3
+        self.dropout = 0.1
         self.gru = nn.GRU(512, self.hidden_dim, self.n_layers, batch_first=True, dropout=self.dropout,
                           bidirectional=self.bidirectionnel).to(device)
         self.mlp = nn.Sequential(
