@@ -22,10 +22,12 @@ class CustomDataset(Dataset):
         return len(self.x)
 
     def __getitem__(self, idx):
+        x = torch.Tensor(self.x[idx])
         if self.note:
             # logging.info(self.y[idx])
-            x = torch.Tensor(self.x[idx])
-            return x.to(torch.int), torch.from_numpy(np.asarray(self.y[idx])) #torch.Tensor(np.asarray(self.y[idx]))
-        return torch.Tensor.int(self.x[idx])
+            y_new = torch.zeros(10)
+            y_new[self.y[idx]] = 1
+            return x.to(torch.int), y_new #torch.Tensor(np.asarray(self.y[idx]))
+        return x.to(torch.int)
 
 

@@ -55,7 +55,7 @@ def dataset_to_pickle(dataset, note=True):
             pickle.dump(df_token, f)
         logging.info(f"Saving pickle: {dataset}")
     else:
-        logging.info(f"Loadings pickle: {dataset}")
+        logging.info(f"Loading pickle: {dataset}")
         with open(os.path.join(pickle_folder, dataset+".p"), 'rb') as f:
             df_token = pickle.load(f)
     # df_token['commentaire'] = df_data['commentaire']

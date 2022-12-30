@@ -31,45 +31,40 @@ from transformers import CamembertModel, CamembertTokenizer
 import torch
 import torch.nn as nn
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
-device="cuda" if torch.cuda.is_available() else "cpu"
+
 class CamembertCustom(nn.Module):
 
     def __init__(self):
         super(CamembertCustom, self).__init__()
         self.camembert = CamembertModel.from_pretrained("camembert-base").to(device)
         self.bidirectionnel = False
-        self.hidden_dim = 32
-        self.n_layers = 1
-        self.dropout = 0
+        self.hidden_dim = 128
+        self.n_layers = 2
+        self.dropout = 0.25
         self.gru = nn.GRU(512, self.hidden_dim, self.n_layers, batch_first=True, dropout=self.dropout,
                           bidirectional=self.bidirectionnel).to(device)
-        self.fc = nn.Linear(self.hidden_dim * (self.bidirectionnel + 1), 10).to(device)
-        self.relu = nn.ReLU().to(device)
-        self.softmax = nn.Softmax(dim=1)
+        self.mlp = nn.Sequential(
+            nn.ReLU(),  # relu sur la sortie du gru
+            nn.Linear(self.hidden_dim * (self.bidirectionnel + 1), 128),
+            nn.Dropout(self.dropout),
+            nn.ReLU(),
+            nn.Linear(128, 10),
+            nn.Softmax(dim=1),
+        ).to(device)
 
     def init_hidden(self, batch_size):
         weight = next(self.parameters()).data
         hidden = weight.new(self.n_layers * (self.bidirectionnel + 1), batch_size, self.hidden_dim).zero_().to(device)
         return hidden
 
-
     def forward(self, x, h):
-        # logging.info(x[0])
-        # exit()
-        # x = self.camembert(x)
         embeddings, _ = self.camembert(x, return_dict=False)
         embeddings = embeddings.detach()
         # logging.info(embeddings.shape)
-
         x = embeddings.transpose(1, 2)
-        out, h = self.gru(x, h)
-        a = nn.Sequential(
-            self.relu,  # relu sur la sortie du gru
-            self.fc  # puis couche lineaire
-        )
-        out = a(out)
-        out = self.softmax(out)
-        out = out[:, -1, :]
+        out_gru, h = self.gru(x, h)
+        out_mlp = self.mlp(out_gru)
+        out = out_mlp[:, -1, :]
         return out, h
-
