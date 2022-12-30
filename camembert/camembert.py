@@ -1,3 +1,4 @@
+import os
 import time
 
 import camembert_model as cm
@@ -20,6 +21,7 @@ def get_step(epoch, loader, batch_idx):
 
 
 def full_train_with_valid(nb_epoch=2):
+    os.makedirs("checkpoints", exist_ok=True)
     model, optimizer, train_loader, valid_loader = init_training()
     criterion = nn.CrossEntropyLoss()
     best_valid_acc = 100
@@ -120,7 +122,7 @@ def test_epoch(model, test_loader):
 def test():
     test_dataset = cd.CustomDataset("test", note=False)
     test_loader = DataLoader(test_dataset, batch_size=32)
-    model = torch.load("checkpoints/model.pth")  # load the best weights of the model and use to test
+    model = torch.load("checkpoints/best_model.pth")  # load the best weights of the model and use to test
     time.sleep(0.01)
     test_epoch(model, test_loader)
 
@@ -136,6 +138,7 @@ def init_training():
     return model, optimizer, train_loader, valid_loader
 
 def train():
+    os.makedirs("checkpoints", exist_ok=True)
     model, optimizer, train_loader, valid_loader = init_training()
     best_valid_acc = 100
     best_valid_it = 0
@@ -147,13 +150,14 @@ def train():
         if v_acc < best_valid_acc:  # keep the best weights
             best_valid_acc = v_acc
             best_valid_it = epoch + 1
-            torch.save(model, "checkpoints/model.pth")
+            torch.save(model, "checkpoints/best_model.pth")
     writer.close()
     test()
 
 
 
 if __name__ == '__main__':
+
     logging.info("program is starting")
     full_train_with_valid(10)
     # valid(model, train_loader)

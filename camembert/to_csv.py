@@ -8,10 +8,10 @@ logging.basicConfig(level=logging.INFO)
 
 tokenizer = CamembertTokenizer.from_pretrained("camembert-base")
 
-# pickle_folder = "pickle"    # joyeux
-# xml_folder = "dataset"      # joyeux
-pickle_folder = "pickle"
-xml_folder = "dataset"
+pickle_folder = "pickle"    # joyeux
+xml_folder = "dataset"      # joyeux
+# pickle_folder = "../pickle"
+# xml_folder = "../dataset"
 
 def str_to_token(x):
     if not x:
