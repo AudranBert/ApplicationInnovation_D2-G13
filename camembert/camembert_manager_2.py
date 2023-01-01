@@ -128,10 +128,10 @@ def fully_train(nb_epoch):
     os.makedirs(checkpoints_folder, exist_ok=True)
     model, optimizer, train_loader, valid_loader = init_training()
     best_valid_acc = 0
-    # v_acc = valid(get_step(0, train_loader, 0), model, valid_loader, during_epoch=True)
-    # if v_acc > best_valid_acc:  # keep the best weights
-    #     best_valid_acc = v_acc
-    #     torch.save(model, checkpoints_folder + "/best_model_2.pth")
+    v_acc = valid(get_step(0, train_loader, 0), model, valid_loader, during_epoch=True)
+    if v_acc > best_valid_acc:  # keep the best weights
+        best_valid_acc = v_acc
+        torch.save(model, checkpoints_folder + "/best_model_2.pth")
 
     for epoch in range(1, nb_epoch+1):
         total_train_loss = 0
@@ -156,13 +156,13 @@ def fully_train(nb_epoch):
             loss.backward()
             optimizer.step()
 
-            if get_step(epoch, train_loader, batch_idx) % 100 == 0 and batch_idx != 0:
+            if get_step(epoch, train_loader, batch_idx) % 1000 == 0 and batch_idx != 0:
                 size = len(target) * t_batch
                 step_loss = t_loss / size
                 writer.add_scalar('Loss/train', step_loss, get_step(epoch, train_loader, batch_idx))
                 t_loss = 0
                 t_batch = 0
-            if get_step(epoch, train_loader, batch_idx) % 250 == 0 and batch_idx != 0:
+            if get_step(epoch, train_loader, batch_idx) % 25000 == 0 and batch_idx != 0:
                 torch.save(model, checkpoints_folder + "/last_model_2.pth")
                 v_acc = valid(get_step(epoch, train_loader, batch_idx), model, valid_loader, during_epoch=True)
                 if v_acc > best_valid_acc:  # keep the best weights
