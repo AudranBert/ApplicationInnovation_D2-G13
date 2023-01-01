@@ -64,9 +64,9 @@ def init_training():
     train_loader = DataLoader(
         train_dataset,
         shuffle=True,
-        batch_size=8,
+        batch_size=10,
         num_workers=4,
-        persistent_workers=True
+        # persistent_workers=True
     )
 
     valid_dataset = dataset_to_pickle_2("dev")
