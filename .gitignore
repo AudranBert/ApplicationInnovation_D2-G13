@@ -9,4 +9,6 @@ dev.svm
 train.exe
 liblinear-2.45
 *.pyc
-camembert/runs
+runs/
+checkpoints/
+

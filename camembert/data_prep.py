@@ -3,15 +3,11 @@ import pickle
 import pandas as pd
 from transformers import CamembertTokenizer
 import numpy as np
-import logging
-logging.basicConfig(level=logging.INFO)
+from params import *
 
-tokenizer = CamembertTokenizer.from_pretrained("camembert-base")
+tokenizer = CamembertTokenizer.from_pretrained("camembert-base", do_lower_case=True)
 
-pickle_folder = "pickle"    # joyeux
-xml_folder = "dataset"      # joyeux
-# pickle_folder = "../pickle"
-# xml_folder = "../dataset"
+
 
 def str_to_token(x):
     if not x:
@@ -28,8 +24,7 @@ def str_to_token(x):
     #     print(f"{len(tokenized_sentence[0:256])} et {len(tokenized_sentence[-257:-1])} = {len(reducted_tokens)}", flush=True)
     return vectorized
 
-def to_float(x):
-    return float(x.replace(',', '.'))
+
 
 def to_tokens(comments):
     return comments.apply(str_to_token)
@@ -62,5 +57,4 @@ def dataset_to_pickle(dataset, note=True):
     # df_token['commentaire'] = df_data['commentaire']
     # print(df_token)
     return df_token
-
 

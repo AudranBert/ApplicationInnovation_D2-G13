@@ -1,10 +1,7 @@
-import pandas as pd
-import torch
 from torch.utils.data import Dataset
-import to_csv as dm
+import data_prep as dm
 import numpy as np
-import logging
-logging.basicConfig(level=logging.INFO)
+from params import *
 
 class CustomDataset(Dataset):
 
