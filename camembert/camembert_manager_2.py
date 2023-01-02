@@ -1,3 +1,4 @@
+import logging
 import pickle
 
 import torch
@@ -59,12 +60,12 @@ def dataset_to_pickle_2(dataset_name, note=True):
     return dataset
 
 
-def init_training():
+def init_training(load=False):
     train_dataset = dataset_to_pickle_2("train")
     train_loader = DataLoader(
         train_dataset,
         shuffle=True,
-        batch_size=10,
+        batch_size=8,
         num_workers=4,
         # persistent_workers=True
     )
@@ -76,9 +77,14 @@ def init_training():
         batch_size=64,
     )
 
-    model = CamembertForSequenceClassification.from_pretrained(
-        'camembert-base',
-        num_labels=10).to(device)
+    if load:
+        logging.info("Load a checkpoint")
+        model = torch.load(checkpoints_folder+"/last_model_2.pth").to(device)
+    else:
+        logging.info("Load a pretrained model")
+        model = CamembertForSequenceClassification.from_pretrained(
+            'camembert-base',
+            num_labels=10).to(device)
     optimizer = AdamW(model.parameters(),
                       lr=2e-5, # Learning Rate
                       eps=1e-8 # Epsilon
@@ -101,7 +107,7 @@ def acc_3_c(out, target):
     pred = torch.where(pred > 5, 2, t)
     return pred.eq(t.view_as(pred)).sum()
 
-def valid(epoch, model, valid_loader, during_epoch=False):
+def valid(epoch, model, valid_loader, during_epoch=False, both=False):
     model.eval()
     correct_10_tot = 0
     correct_3_tot = 0
@@ -112,31 +118,36 @@ def valid(epoch, model, valid_loader, during_epoch=False):
             out = out[0]
             correct_10_tot += acc_10_c(out, target)
             correct_3_tot += acc_3_c(out, target)
-            break
     v_10_acc = correct_10_tot / len(valid_loader.dataset)
     v_3_acc = correct_3_tot / len(valid_loader.dataset)
     if during_epoch:
         writer.add_scalar('Accuracy_10c/valid_step', v_10_acc, epoch)
         writer.add_scalar('Accuracy_3c/valid_step', v_3_acc, epoch)
+    elif both:
+        writer.add_scalar('Accuracy_10c/valid_step', v_10_acc, epoch)
+        writer.add_scalar('Accuracy_3c/valid_step', v_3_acc, epoch)
+        writer.add_scalar('Accuracy_10c/valid', v_10_acc, epoch)
+        writer.add_scalar('Accuracy_3c/valid', v_3_acc, epoch)
     else:
         writer.add_scalar('Accuracy_10c/valid', v_10_acc, epoch)
         writer.add_scalar('Accuracy_3c/valid', v_3_acc, epoch)
     return v_10_acc
 
 
-def fully_train(nb_epoch):
+def fully_train(nb_epoch, load=False):
     os.makedirs(checkpoints_folder, exist_ok=True)
-    model, optimizer, train_loader, valid_loader = init_training()
+    model, optimizer, train_loader, valid_loader = init_training(load)
     best_valid_acc = 0
-    v_acc = valid(get_step(0, train_loader, 0), model, valid_loader, during_epoch=True)
+    v_acc = valid(0, model, valid_loader, both=True)
     if v_acc > best_valid_acc:  # keep the best weights
         best_valid_acc = v_acc
-        torch.save(model, checkpoints_folder + "/best_model_2.pth")
 
     for epoch in range(1, nb_epoch+1):
         total_train_loss = 0
-        t_loss = 0
-        t_batch = 0
+        b_loss = 0
+        b_ct = 0
+        b_acc3 = 0
+        b_acc10 = 0
         model.train()
 
         # Pour chaque batch
@@ -149,26 +160,29 @@ def fully_train(nb_epoch):
                                  attention_mask=attention_mask,
                                  labels=target,
                                  return_dict=False)
-
+            b_acc3 += acc_3_c(logits, target)
+            b_acc10 += acc_10_c(logits, target)
             total_train_loss += loss.item()
-            t_loss += loss.item()
-            t_batch += 1
+            b_loss += loss.item()
+            b_ct += 1
             loss.backward()
             optimizer.step()
 
             if get_step(epoch, train_loader, batch_idx) % 1000 == 0 and batch_idx != 0:
-                size = len(target) * t_batch
-                step_loss = t_loss / size
-                writer.add_scalar('Loss/train', step_loss, get_step(epoch, train_loader, batch_idx))
-                t_loss = 0
-                t_batch = 0
+                size = len(target) * b_ct
+                writer.add_scalar('Loss/train', (b_loss / size), get_step(epoch, train_loader, batch_idx))
+                writer.add_scalar('Accuracy_3c/train', (b_acc3 / size)*100, get_step(epoch, train_loader, batch_idx))
+                writer.add_scalar('Accuracy_10c/train', (b_acc10 / size)*100, get_step(epoch, train_loader, batch_idx))
+                b_loss = 0
+                b_ct = 0
+                b_acc3 = 0
+                b_acc10 = 0
             if get_step(epoch, train_loader, batch_idx) % 25000 == 0 and batch_idx != 0:
                 torch.save(model, checkpoints_folder + "/last_model_2.pth")
                 v_acc = valid(get_step(epoch, train_loader, batch_idx), model, valid_loader, during_epoch=True)
                 if v_acc > best_valid_acc:  # keep the best weights
                     best_valid_acc = v_acc
                     torch.save(model, checkpoints_folder + "/best_model_2.pth")
-        # On calcule la  loss moyenne sur toute l'epoque
         avg_train_loss = total_train_loss / len(train_loader.dataset)
         logging.info(f"Avg train loss :{avg_train_loss}")
         torch.save(model, checkpoints_folder + "/last_model_2.pth")
