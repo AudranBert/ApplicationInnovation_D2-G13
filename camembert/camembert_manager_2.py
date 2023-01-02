@@ -37,7 +37,7 @@ def dataset_to_pickle_2(dataset_name, note=True):
                                                     return_tensors='pt')
         if note:
             df_token = pd.DataFrame(columns=['commentaire', 'note'])
-            df_token['note'] = df_data['note'].apply(to_float)
+            df_token['note'] = df_data['note'].apply(to_float_2)
             sentiments = df_token['note'].values.tolist()
             sentiments = torch.tensor(sentiments)
             dataset = TensorDataset(
@@ -93,18 +93,18 @@ def init_training(load=False):
 
 def acc_10_c(out, target):
     t = target
-    pred = torch.argmax(out, dim=1).to(device).type(torch.float)
+    pred = torch.argmax(out, dim=1).to(device).type(torch.int64)
     return pred.eq(t.view_as(pred)).sum()
 
 def acc_3_c(out, target):
-    t = target
+    t = target.type(torch.int64)
     t = torch.where(t < 5, 0, t)
     t = torch.where(t == 5, 1, t)
     t = torch.where(t > 5, 2, t)
-    pred = torch.argmax(out, dim=1).to(device).type(torch.float)
-    pred = torch.where(pred < 5, 0, t)
-    pred = torch.where(pred == 5, 1, t)
-    pred = torch.where(pred > 5, 2, t)
+    pred = torch.argmax(out, dim=1).to(device).type(torch.int64)
+    pred = torch.where(pred < 5, 0, pred)
+    pred = torch.where(pred == 5, 1, pred)
+    pred = torch.where(pred > 5, 2, pred)
     return pred.eq(t.view_as(pred)).sum()
 
 def valid(epoch, model, valid_loader, during_epoch=False, both=False):

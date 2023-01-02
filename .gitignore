@@ -11,4 +11,4 @@ liblinear-2.45
 *.pyc
 runs/
 checkpoints/
-
+checkpoints_old/
