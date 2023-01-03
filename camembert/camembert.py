@@ -8,6 +8,7 @@ import camembert_manager_2 as cm2
 import results as ft
 
 mode = "2"
+train = False
 
 if __name__ == '__main__':
 
@@ -19,11 +20,16 @@ if __name__ == '__main__':
         if not os.path.exists(test_out_file):
             cmc.test()
         ft.tensor_to_predictions()
-    elif mode =="2":
-        if not os.path.exists(checkpoints_folder+"/best_model_2.pth"):
-            cm2.fully_train(2)
+    elif mode == "2":
+        if train:
+            if not os.path.exists(checkpoints_folder+"/best_model_2.pth"):
+                cm2.fully_train(2)
+            else:
+                cm2.fully_train(1, load=True)
+        if os.path.exists(checkpoints_folder + "/best_model_2.pth"):
+            cm2.test()
         else:
-            cm2.fully_train(1, load=True)
+            logging.info("Error, no model")
     else:
         logging.info(f"mode:{mode} doesnt exist")
     # valid(model, train_loader)

@@ -107,6 +107,26 @@ def acc_3_c(out, target):
     pred = torch.where(pred > 5, 2, pred)
     return pred.eq(t.view_as(pred)).sum()
 
+def test():
+    test_dataset = dataset_to_pickle_2("test", note=False)
+    test_loader = DataLoader(
+        test_dataset,
+        shuffle=False,
+        batch_size=64,
+    )
+    model = torch.load(checkpoints_folder + "/best_model_2.pth").to(device)
+    model.eval()
+    model_predictions = []
+    with torch.no_grad():
+            for batch_idx, (x, mask) in enumerate(tqdm(test_loader, desc="Test batch")):  # for each batch
+                x, attention_mask = x.to(device), mask.to(device)
+                out = model(x, attention_mask=attention_mask)
+                out = out[0]
+                pred = torch.argmax(out, dim=1).cpu().detach().type(torch.float)
+                model_predictions.append(pred)
+    predictions = torch.cat(model_predictions, dim=0)
+    torch.save(predictions, test_out_file)
+
 def valid(epoch, model, valid_loader, during_epoch=False, both=False):
     model.eval()
     correct_10_tot = 0
@@ -186,7 +206,7 @@ def fully_train(nb_epoch, load=False):
         avg_train_loss = total_train_loss / len(train_loader.dataset)
         logging.info(f"Avg train loss :{avg_train_loss}")
         torch.save(model, checkpoints_folder + "/last_model_2.pth")
-        v_acc = valid(get_step(epoch, train_loader, batch_idx), model, valid_loader, during_epoch=True)
+        v_acc = valid(get_step(epoch, train_loader, batch_idx), model, valid_loader, during_epoch=True, both=True)
         if v_acc > best_valid_acc:  # keep the best weights
             best_valid_acc = v_acc
             torch.save(model, checkpoints_folder + "/best_model_2.pth")
