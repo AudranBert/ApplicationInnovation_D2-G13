@@ -1,9 +1,9 @@
 import os
 import time
 
-import camembert_model as cm
-import custom_dataset as cd
-import data_prep as dm
+import depreciated_camembert_model as cm
+import depreciated_custom_dataset as cd
+import depreciated_data_prep as dm
 import logging
 from torch.utils.data import DataLoader
 import torch.nn.functional as F

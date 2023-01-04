@@ -3,7 +3,7 @@ import os
 
 from params import *
 
-import camembert_manager_custom as cmc
+import depreciated_camembert_manager_custom as cmc
 import camembert_manager_2 as cm2
 import results as ft
 

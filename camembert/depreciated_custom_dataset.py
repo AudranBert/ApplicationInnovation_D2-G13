@@ -1,5 +1,5 @@
 from torch.utils.data import Dataset
-import data_prep as dm
+import depreciated_data_prep as dm
 import numpy as np
 from params import *
 
