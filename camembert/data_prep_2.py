@@ -1,7 +1,5 @@
 from params import *
 import string
-from transformers import CamembertTokenizer
-from torch.utils.data import TensorDataset
 
 stopwords_list = ['au', 'aux', 'avec', 'ce', 'ces', 'dans', 'de', 'des', 'du', 'elle', 'en', 'et', 'eux', 'il', 'ils', 'je', 'la', 'le', 'les', 'leur', 'lui', 'ma', 'mais', 'me', 'même', 'mes', 'moi', 'mon', 'nos', 'notre', 'nous', 'on', 'ou', 'par', 'pour', 'qu', 'que', 'qui', 'sa', 'se', 'ses', 'son', 'sur', 'ta', 'te', 'tes', 'toi', 'ton', 'tu', 'un', 'une', 'vos', 'votre', 'vous', 'c', 'd', 'j', 'l', 'à', 'm', 'n', 's', 't', 'y', 'été', 'étée', 'étées', 'étés', 'étant', 'étante',
 'étants', 'étantes', 'suis', 'es', 'est', 'sommes', 'êtes', 'sont', 'serai', 'seras', 'sera', 'serons', 'serez', 'seront', 'serais', 'serait', 'serions', 'seriez', 'seraient', 'étais', 'était',
@@ -21,7 +19,19 @@ def remove_stopwords(df):
     df["commentaire"] = df["commentaire"].apply(stopwords_remove)
     return df
 
+def test_data_prep(dataset_name, note=True):
+    logging.info(f"Loading xml of: {dataset_name}")
+    df_data = pd.read_xml(os.path.join(xml_folder, dataset_name + ".xml"))
+    df_data.fillna('a', inplace=True)
+    os.makedirs(pickle_folder, exist_ok=True)
+    logging.info(f"Removing stopwords in: {dataset_name}")
+    df_data = remove_stopwords(df_data)
+    logging.info(f"Tokenization of: {dataset_name}")
+    reviews = df_data['commentaire'].values.tolist()
+
 def dataset_to_pickle_2(dataset_name, note=True):
+    from transformers import CamembertTokenizer
+    from torch.utils.data import TensorDataset
     if not os.path.exists(os.path.join(pickle_folder, dataset_name+"_2.p")):
         logging.info(f"Loading xml of: {dataset_name}")
         df_data = pd.read_xml(os.path.join(xml_folder, dataset_name + ".xml"))
@@ -68,4 +78,5 @@ def dataset_to_pickle_2(dataset_name, note=True):
 
 if __name__ == '__main__':
     # train_dataset = dataset_to_pickle_2("train")
-    valid_dataset = dataset_to_pickle_2("dev")
+    test_data_prep("dev")
+    # valid_dataset = dataset_to_pickle_2("dev")
