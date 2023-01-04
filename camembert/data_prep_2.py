@@ -1,5 +1,6 @@
 from params import *
 import string
+import os
 from transformers import CamembertTokenizer
 from torch.utils.data import TensorDataset
 
@@ -9,8 +10,10 @@ stopwords_list = ['au', 'aux', 'avec', 'ce', 'ces', 'dans', 'de', 'des', 'du', '
 #regex_exp = re.compile(r'|'.join(stopwords_list),re.IGNORECASE)
 #regex_exp = re.compile("|".join(stopwords_list))
 
+keep_exc = string.punctuation
+keep_exc = keep_exc.replace("!", "") # don't remove hyphens
 def stopwords_remove(x):
-    x.translate(x.maketrans('','',string.punctuation))
+    x.translate(x.maketrans('','',keep_exc))
     splits = x.split()
     cleaned = ["" if x.lower() in stopwords_list else x for x in splits]
     cleaned = [x for x in cleaned if x != '']
