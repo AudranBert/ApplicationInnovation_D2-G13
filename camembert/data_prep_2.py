@@ -1,22 +1,18 @@
 from params import *
 import string
-<<<<<<< HEAD
-import os
-from transformers import CamembertTokenizer
-from torch.utils.data import TensorDataset
-=======
->>>>>>> 4e51f94dce1485707603fda9793378b20686fb93
+import re
 
 stopwords_list = ['au', 'aux', 'avec', 'ce', 'ces', 'dans', 'de', 'des', 'du', 'elle', 'en', 'et', 'eux', 'il', 'ils', 'je', 'la', 'le', 'les', 'leur', 'lui', 'ma', 'mais', 'me', 'même', 'mes', 'moi', 'mon', 'nos', 'notre', 'nous', 'on', 'ou', 'par', 'pour', 'qu', 'que', 'qui', 'sa', 'se', 'ses', 'son', 'sur', 'ta', 'te', 'tes', 'toi', 'ton', 'tu', 'un', 'une', 'vos', 'votre', 'vous', 'c', 'd', 'j', 'l', 'à', 'm', 'n', 's', 't', 'y', 'été', 'étée', 'étées', 'étés', 'étant', 'étante',
 'étants', 'étantes', 'suis', 'es', 'est', 'sommes', 'êtes', 'sont', 'serai', 'seras', 'sera', 'serons', 'serez', 'seront', 'serais', 'serait', 'serions', 'seriez', 'seraient', 'étais', 'était',
 'étions', 'étiez', 'étaient', 'fus', 'fut', 'fûmes', 'fûtes', 'furent', 'sois', 'soit', 'soyons', 'soyez', 'soient', 'fusse', 'fusses', 'fût', 'fussions', 'fussiez', 'fussent', 'ayant', 'ayante', 'ayantes', 'ayants', 'eu', 'eue', 'eues', 'eus', 'ai', 'as', 'avons', 'avez', 'ont', 'aurai', 'auras', 'aura', 'aurons', 'aurez', 'auront', 'aurais', 'aurait', 'aurions', 'auriez', 'auraient', 'avais', 'avait', 'avions', 'aviez', 'avaient', 'eut', 'eûmes', 'eûtes', 'eurent', 'aie', 'aies', 'ait', 'ayons', 'ayez', 'aient', 'eusse', 'eusses', 'eût', 'eussions', 'eussiez', 'eussent']
 #regex_exp = re.compile(r'|'.join(stopwords_list),re.IGNORECASE)
-#regex_exp = re.compile("|".join(stopwords_list))
 
 keep_exc = string.punctuation
-keep_exc = keep_exc.replace("!", "") # don't remove hyphens
+keep_exc = keep_exc.replace("!", "") # don't remove !
+pattern = r"[{}]".format(keep_exc)
 def stopwords_remove(x):
-    x.translate(x.maketrans('','',keep_exc))
+    #x.translate({ord(char):None for char in keep_exc})
+    x=re.sub(pattern,"",x)
     splits = x.split()
     cleaned = ["" if x.lower() in stopwords_list else x for x in splits]
     cleaned = [x for x in cleaned if x != '']
@@ -25,6 +21,7 @@ def stopwords_remove(x):
 
 def remove_stopwords(df):
     df["commentaire"] = df["commentaire"].apply(stopwords_remove)
+    print(df)
     return df
 
 def test_data_prep(dataset_name, note=True):
