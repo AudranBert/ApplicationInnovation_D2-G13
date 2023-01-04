@@ -21,7 +21,7 @@ def stopwords_remove(x):
 
 def remove_stopwords(df):
     df["commentaire"] = df["commentaire"].apply(stopwords_remove)
-    print(df)
+
     return df
 
 def test_data_prep(dataset_name, note=True):
@@ -30,7 +30,9 @@ def test_data_prep(dataset_name, note=True):
     df_data.fillna('a', inplace=True)
     os.makedirs(pickle_folder, exist_ok=True)
     logging.info(f"Removing stopwords in: {dataset_name}")
+    print(df_data)
     df_data = remove_stopwords(df_data)
+    print(df_data)
     logging.info(f"Tokenization of: {dataset_name}")
     reviews = df_data['commentaire'].values.tolist()
 
@@ -82,6 +84,7 @@ def dataset_to_pickle_2(dataset_name, note=True):
 
 
 if __name__ == '__main__':
-    # train_dataset = dataset_to_pickle_2("train")
     test_data_prep("dev")
+    # train_dataset = dataset_to_pickle_2("train")
     # valid_dataset = dataset_to_pickle_2("dev")
+    # test_dataset = dataset_to_pickle_2("test", note=False)

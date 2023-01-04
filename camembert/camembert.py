@@ -23,7 +23,7 @@ if __name__ == '__main__':
     elif mode == "2":
         if train:
             if not os.path.exists(checkpoints_folder+"/best_model_2.pth"):
-                cm2.fully_train(1)
+                cm2.fully_train(2)
             else:
                 cm2.fully_train(1, load=True)
         if os.path.exists(checkpoints_folder + "/best_model_2.pth"):
