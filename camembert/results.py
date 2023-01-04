@@ -4,8 +4,8 @@ import os
 from params import *
 
 def export_test_results():
-    raw_predictions = torch.load(test_out_file).detach().cpu()
-    f = open("test_results.csv", 'w')
+    raw_predictions = torch.load(os.path.join(export_folder, test_out_file)).detach().cpu()
+    f = open(os.path.join(export_folder, "test_results.csv"), 'w')
     writer = csv.writer(f, lineterminator='\n')
     for i in raw_predictions:
         i = i.item()
@@ -41,8 +41,9 @@ def createEvalFile(filename_eval, dataset, model_output_file):
 
 
 if __name__ == '__main__':
-    # if not os.path.exists("test_results.csv"):
-    export_test_results()
+    os.makedirs(export_folder, exist_ok=True)
+    if not os.path.join(export_folder, "test_results.csv"):
+        export_test_results()
     pickle_file = os.path.join(pickle_folder, "test_set.p")
     test = check_xml(pickle_file, test_file)
-    createEvalFile("eval.txt", test, "test_results.csv")
+    createEvalFile(os.path.join(export_folder, "eval.txt"), test, os.path.join(export_folder, "test_results.csv"))

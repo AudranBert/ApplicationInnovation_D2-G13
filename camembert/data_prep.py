@@ -4,7 +4,7 @@ import pandas as pd
 from transformers import CamembertTokenizer
 import numpy as np
 import string
-from main_svm import *
+# from main_svm import *
 from params import *
 #from nltk.corpus import stopwords
 #import re

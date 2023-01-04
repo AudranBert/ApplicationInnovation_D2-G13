@@ -16,3 +16,4 @@ results_from_joyeux/
 camembert/eval.txt
 camembert/test_predictions.pth
 camembert/test_results.csv
+result_camembert/

@@ -8,7 +8,7 @@ import camembert_manager_2 as cm2
 import results as ft
 
 mode = "2"
-train = False
+train = True
 
 if __name__ == '__main__':
 

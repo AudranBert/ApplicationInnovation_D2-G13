@@ -6,9 +6,11 @@ import pandas as pd
 checkpoints_folder = "checkpoints"
 pickle_folder = "pickle"    # joyeux
 xml_folder = "dataset"      # joyeux
-checkpoints_folder = "../checkpoints"
-pickle_folder = "../pickle"
-xml_folder = "../dataset"
+export_folder = "export"
+# checkpoints_folder = "../checkpoints"
+# pickle_folder = "../pickle"
+# xml_folder = "../dataset"
+# export_folder = "../export"
 test_out_file = "test_predictions.pth"
 
 

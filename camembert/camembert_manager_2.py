@@ -11,10 +11,29 @@ from params import *
 import torch.nn.functional as F
 import custom_dataset as cd
 from torch.utils.tensorboard import SummaryWriter
+import string
 
 writer = SummaryWriter()
 
 # https://ledatascientist.com/analyse-de-sentiments-avec-camembert/
+
+stopwords_list = ['au', 'aux', 'avec', 'ce', 'ces', 'dans', 'de', 'des', 'du', 'elle', 'en', 'et', 'eux', 'il', 'ils', 'je', 'la', 'le', 'les', 'leur', 'lui', 'ma', 'mais', 'me', 'même', 'mes', 'moi', 'mon', 'nos', 'notre', 'nous', 'on', 'ou', 'par', 'pour', 'qu', 'que', 'qui', 'sa', 'se', 'ses', 'son', 'sur', 'ta', 'te', 'tes', 'toi', 'ton', 'tu', 'un', 'une', 'vos', 'votre', 'vous', 'c', 'd', 'j', 'l', 'à', 'm', 'n', 's', 't', 'y', 'été', 'étée', 'étées', 'étés', 'étant', 'étante',
+'étants', 'étantes', 'suis', 'es', 'est', 'sommes', 'êtes', 'sont', 'serai', 'seras', 'sera', 'serons', 'serez', 'seront', 'serais', 'serait', 'serions', 'seriez', 'seraient', 'étais', 'était',
+'étions', 'étiez', 'étaient', 'fus', 'fut', 'fûmes', 'fûtes', 'furent', 'sois', 'soit', 'soyons', 'soyez', 'soient', 'fusse', 'fusses', 'fût', 'fussions', 'fussiez', 'fussent', 'ayant', 'ayante', 'ayantes', 'ayants', 'eu', 'eue', 'eues', 'eus', 'ai', 'as', 'avons', 'avez', 'ont', 'aurai', 'auras', 'aura', 'aurons', 'aurez', 'auront', 'aurais', 'aurait', 'aurions', 'auriez', 'auraient', 'avais', 'avait', 'avions', 'aviez', 'avaient', 'eut', 'eûmes', 'eûtes', 'eurent', 'aie', 'aies', 'ait', 'ayons', 'ayez', 'aient', 'eusse', 'eusses', 'eût', 'eussions', 'eussiez', 'eussent']
+#regex_exp = re.compile(r'|'.join(stopwords_list),re.IGNORECASE)
+#regex_exp = re.compile("|".join(stopwords_list))
+
+def stopwords_remove(x):
+    x.translate(x.maketrans('','',string.punctuation))
+    splits = x.split()
+    cleaned = ["" if x.lower() in stopwords_list else x for x in splits]
+    cleaned = [x for x in cleaned if x != '']
+    cleaned = ' '.join(cleaned)
+    return cleaned
+
+def remove_stopwords(df):
+    df["commentaire"] = df["commentaire"].apply(stopwords_remove)
+    return df
 
 def dataset_to_pickle_2(dataset_name, note=True):
     if not os.path.exists(os.path.join(pickle_folder, dataset_name+"_2.p")):
@@ -22,8 +41,9 @@ def dataset_to_pickle_2(dataset_name, note=True):
         df_data = pd.read_xml(os.path.join(xml_folder, dataset_name + ".xml"))
         df_data.fillna('a', inplace=True)
         os.makedirs(pickle_folder, exist_ok=True)
+        logging.info(f"Removing stopwords in: {dataset_name}")
+        df_data = remove_stopwords(df_data)
         logging.info(f"Tokenization of: {dataset_name}")
-
         reviews = df_data['commentaire'].values.tolist()
         tokenizer = CamembertTokenizer.from_pretrained(
             'camembert-base',
@@ -108,6 +128,7 @@ def acc_3_c(out, target):
     return pred.eq(t.view_as(pred)).sum()
 
 def test():
+    os.makedirs(export_folder, exist_ok=True)
     test_dataset = dataset_to_pickle_2("test", note=False)
     test_loader = DataLoader(
         test_dataset,
@@ -125,7 +146,7 @@ def test():
                 pred = torch.argmax(out, dim=1).cpu().detach().type(torch.float)
                 model_predictions.append(pred)
     predictions = torch.cat(model_predictions, dim=0)
-    torch.save(predictions, test_out_file)
+    torch.save(predictions, os.path.join(export_folder, test_out_file))
 
 def valid(epoch, model, valid_loader, during_epoch=False, both=False):
     model.eval()
@@ -154,9 +175,11 @@ def valid(epoch, model, valid_loader, during_epoch=False, both=False):
     return v_10_acc
 
 
-def fully_train(nb_epoch, load=False):
+def fully_train(nb_epoch, load=False, only_init=False):
     os.makedirs(checkpoints_folder, exist_ok=True)
     model, optimizer, train_loader, valid_loader = init_training(load)
+    if only_init:
+        return
     best_valid_acc = 0
     v_acc = valid(0, model, valid_loader, both=True)
     if v_acc > best_valid_acc:  # keep the best weights
