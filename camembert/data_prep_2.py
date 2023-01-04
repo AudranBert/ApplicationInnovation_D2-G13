@@ -64,3 +64,8 @@ def dataset_to_pickle_2(dataset_name, note=True):
     # df_token['commentaire'] = df_data['commentaire']
     # print(df_token)
     return dataset
+
+
+if __name__ == '__main__':
+    # train_dataset = dataset_to_pickle_2("train")
+    valid_dataset = dataset_to_pickle_2("dev")
