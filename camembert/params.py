@@ -13,7 +13,7 @@ export_folder = "export"
 # pickle_folder = "../pickle"
 # xml_folder = "../dataset"
 # export_folder = "../export"
-test_out_file = "test_predictions.pth"
+test_out_file = "test_predictions"
 
 
 import logging

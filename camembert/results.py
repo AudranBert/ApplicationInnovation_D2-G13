@@ -42,7 +42,7 @@ def createEvalFile(filename_eval, dataset, model_output_file):
 
 if __name__ == '__main__':
     os.makedirs(export_folder, exist_ok=True)
-    if not os.path.join(export_folder, f"test_results_{execution_id}.csv"):
+    if not os.path.exists(os.path.join(export_folder, f"test_results_{execution_id}.csv")):
         export_test_results()
     pickle_file = os.path.join(pickle_folder,f"test_set_{execution_id}.p")
     test = check_xml(pickle_file, test_file)

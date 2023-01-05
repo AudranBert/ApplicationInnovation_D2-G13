@@ -36,10 +36,10 @@ def test_data_prep(dataset_name, note=True):
     logging.info(f"Tokenization of: {dataset_name}")
     reviews = df_data['commentaire'].values.tolist()
 
-def dataset_to_pickle_2(dataset_name, note=True, lower_case=False):
+def dataset_to_pickle_2(dataset_name, note=True, lower_case=True):
     from transformers import CamembertTokenizer
     from torch.utils.data import TensorDataset
-    if not os.path.exists(os.path.join(pickle_folder, f"{dataset_name}{execution_id}.p")):
+    if not os.path.exists(os.path.join(pickle_folder, f"{dataset_name}_{execution_id}.p")):
         logging.info(f"Loading xml of: {dataset_name}")
         df_data = pd.read_xml(os.path.join(xml_folder, dataset_name + ".xml"))
         df_data.fillna('a', inplace=True)
@@ -71,12 +71,12 @@ def dataset_to_pickle_2(dataset_name, note=True, lower_case=False):
             dataset = TensorDataset(
                 encoded_batch['input_ids'],
                 encoded_batch['attention_mask'])
-        with open(os.path.join(pickle_folder, f"{dataset_name}{execution_id}.p"), 'wb') as f:
+        with open(os.path.join(pickle_folder, f"{dataset_name}_{execution_id}.p"), 'wb') as f:
             pickle.dump(dataset, f)
         logging.info(f"Saving pickle: {dataset_name}")
     else:
         logging.info(f"Loading pickle: {dataset_name}")
-        with open(os.path.join(pickle_folder, f"{dataset_name}{execution_id}.p"), 'rb') as f:
+        with open(os.path.join(pickle_folder, f"{dataset_name}_{execution_id}.p"), 'rb') as f:
             dataset = pickle.load(f)
     # df_token['commentaire'] = df_data['commentaire']
     # print(df_token)
@@ -84,7 +84,7 @@ def dataset_to_pickle_2(dataset_name, note=True, lower_case=False):
 
 
 if __name__ == '__main__':
-    test_data_prep("dev")
-    # train_dataset = dataset_to_pickle_2("train")
-    # valid_dataset = dataset_to_pickle_2("dev")
-    # test_dataset = dataset_to_pickle_2("test", note=False)
+    # test_data_prep("dev")
+    train_dataset = dataset_to_pickle_2("train")
+    valid_dataset = dataset_to_pickle_2("dev")
+    test_dataset = dataset_to_pickle_2("test", note=False)
