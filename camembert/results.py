@@ -4,8 +4,8 @@ import os
 from params import *
 
 def export_test_results():
-    raw_predictions = torch.load(os.path.join(export_folder, test_out_file)).detach().cpu()
-    f = open(os.path.join(export_folder, "test_results.csv"), 'w')
+    raw_predictions = torch.load(os.path.join(export_folder,  f"{test_out_file}_{execution_id}.pth")).detach().cpu()
+    f = open(os.path.join(export_folder, f"test_results_{execution_id}.csv"), 'w')
     writer = csv.writer(f, lineterminator='\n')
     for i in raw_predictions:
         i = i.item()
@@ -15,7 +15,7 @@ def export_test_results():
     f.close()
 
 def tensor_to_predictions():
-    raw_predictions = torch.load(test_out_file).detach().cpu()
+    raw_predictions = torch.load(f"{test_out_file}_{execution_id}.pth").detach().cpu()
     r = {}
     for i in raw_predictions:
         i = i.item()
@@ -42,8 +42,8 @@ def createEvalFile(filename_eval, dataset, model_output_file):
 
 if __name__ == '__main__':
     os.makedirs(export_folder, exist_ok=True)
-    if not os.path.join(export_folder, "test_results.csv"):
+    if not os.path.join(export_folder, f"test_results_{execution_id}.csv"):
         export_test_results()
-    pickle_file = os.path.join(pickle_folder, "test_set.p")
+    pickle_file = os.path.join(pickle_folder,f"test_set_{execution_id}.p")
     test = check_xml(pickle_file, test_file)
-    createEvalFile(os.path.join(export_folder, "eval.txt"), test, os.path.join(export_folder, "test_results.csv"))
+    createEvalFile(os.path.join(export_folder, f"eval_{execution_id}.txt"), test, os.path.join(export_folder, f"test_results_{execution_id}.csv"))

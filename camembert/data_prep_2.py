@@ -36,10 +36,10 @@ def test_data_prep(dataset_name, note=True):
     logging.info(f"Tokenization of: {dataset_name}")
     reviews = df_data['commentaire'].values.tolist()
 
-def dataset_to_pickle_2(dataset_name, note=True):
+def dataset_to_pickle_2(dataset_name, note=True, lower_case=False):
     from transformers import CamembertTokenizer
     from torch.utils.data import TensorDataset
-    if not os.path.exists(os.path.join(pickle_folder, dataset_name+"_2.p")):
+    if not os.path.exists(os.path.join(pickle_folder, f"{dataset_name}{execution_id}.p")):
         logging.info(f"Loading xml of: {dataset_name}")
         df_data = pd.read_xml(os.path.join(xml_folder, dataset_name + ".xml"))
         df_data.fillna('a', inplace=True)
@@ -50,7 +50,7 @@ def dataset_to_pickle_2(dataset_name, note=True):
         reviews = df_data['commentaire'].values.tolist()
         tokenizer = CamembertTokenizer.from_pretrained(
             'camembert-base',
-            do_lower_case=True)
+            do_lower_case=lower_case)
         encoded_batch = tokenizer.batch_encode_plus(reviews,
                                                     add_special_tokens=True,
                                                     max_length=512,
@@ -71,12 +71,12 @@ def dataset_to_pickle_2(dataset_name, note=True):
             dataset = TensorDataset(
                 encoded_batch['input_ids'],
                 encoded_batch['attention_mask'])
-        with open(os.path.join(pickle_folder, dataset_name+"_2.p"), 'wb') as f:
+        with open(os.path.join(pickle_folder, f"{dataset_name}{execution_id}.p"), 'wb') as f:
             pickle.dump(dataset, f)
         logging.info(f"Saving pickle: {dataset_name}")
     else:
         logging.info(f"Loading pickle: {dataset_name}")
-        with open(os.path.join(pickle_folder, dataset_name+"_2.p"), 'rb') as f:
+        with open(os.path.join(pickle_folder, f"{dataset_name}{execution_id}.p"), 'rb') as f:
             dataset = pickle.load(f)
     # df_token['commentaire'] = df_data['commentaire']
     # print(df_token)

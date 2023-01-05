@@ -31,7 +31,7 @@ def init_training(load=False):
 
     if load:
         logging.info("Load a checkpoint")
-        model = torch.load(checkpoints_folder+"/last_model_2.pth").to(device)
+        model = torch.load(checkpoints_folder+f"/last_model_{execution_id}.pth").to(device)
     else:
         logging.info("Load a pretrained model")
         model = CamembertForSequenceClassification.from_pretrained(
@@ -67,7 +67,7 @@ def test():
         shuffle=False,
         batch_size=64,
     )
-    model = torch.load(checkpoints_folder + "/best_model_2.pth").to(device)
+    model = torch.load(checkpoints_folder + f"/best_model_{execution_id}.pth").to(device)
     model.eval()
     model_predictions = []
     with torch.no_grad():
@@ -78,7 +78,7 @@ def test():
                 pred = torch.argmax(out, dim=1).cpu().detach().type(torch.float)
                 model_predictions.append(pred)
     predictions = torch.cat(model_predictions, dim=0)
-    torch.save(predictions, os.path.join(export_folder, test_out_file))
+    torch.save(predictions, os.path.join(export_folder, f"{test_out_file}_{execution_id}.pth"))
 
 def valid(epoch, model, valid_loader, during_epoch=False, both=False):
     model.eval()
@@ -153,15 +153,15 @@ def fully_train(nb_epoch, load=False, only_init=False):
                 b_acc3 = 0
                 b_acc10 = 0
             if get_step(epoch, train_loader, batch_idx) % 25000 == 0 and batch_idx != 0:
-                torch.save(model, checkpoints_folder + "/last_model_2.pth")
+                torch.save(model, checkpoints_folder + f"/last_model_{execution_id}.pth")
                 v_acc = valid(get_step(epoch, train_loader, batch_idx), model, valid_loader, during_epoch=True)
                 if v_acc > best_valid_acc:  # keep the best weights
                     best_valid_acc = v_acc
-                    torch.save(model, checkpoints_folder + "/best_model_2.pth")
+                    torch.save(model, checkpoints_folder + f"/best_model_{execution_id}.pth")
         avg_train_loss = total_train_loss / len(train_loader.dataset)
         logging.info(f"Avg train loss :{avg_train_loss}")
-        torch.save(model, checkpoints_folder + "/last_model_2.pth")
+        torch.save(model, checkpoints_folder + f"/last_model_{execution_id}.pth")
         v_acc = valid(get_step(epoch, train_loader, batch_idx), model, valid_loader, during_epoch=True, both=True)
         if v_acc > best_valid_acc:  # keep the best weights
             best_valid_acc = v_acc
-            torch.save(model, checkpoints_folder + "/best_model_2.pth")
+            torch.save(model, checkpoints_folder + f"/best_model_{execution_id}.pth")

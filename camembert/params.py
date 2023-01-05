@@ -3,6 +3,8 @@ import pickle
 
 import pandas as pd
 
+execution_id = "w_Upper"
+
 checkpoints_folder = "checkpoints"
 pickle_folder = "pickle"    # joyeux
 xml_folder = "dataset"      # joyeux
